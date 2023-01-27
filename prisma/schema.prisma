@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model attractions {
+  id          Int           @id(map: "attractions_pk") @default(autoincrement())
+  name        String        @db.VarChar(255)
+  addressId   Int
+  img         String        @db.VarChar(255)
+  price       Int           @default(autoincrement())
+  address     addresses     @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "attractions_fk0")
+  travelsData travelsData[]
+}
+
+model cities {
+  id        Int         @id(map: "cities_pk") @default(autoincrement())
+  name      String      @unique @db.VarChar(255)
+  countryId Int
+  img       Int         @unique
+  addresses addresses[]
+  countries countries   @relation(fields: [countryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cities_fk0")
+}
+
+model countries {
+  id     Int      @id(map: "countries_pk") @default(autoincrement())
+  name   String   @unique @db.VarChar(255)
+  img    String   @unique @db.VarChar(255)
+  cities cities[]
+}
+
+model travels {
+  id          Int           @id(map: "travels_pk") @default(autoincrement())
+  userId      Int           @default(autoincrement())
+  users       users         @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travels_fk0")
+  travelsData travelsData[]
+}
+
+model users {
+  id       Int       @id(map: "users_pk") @default(autoincrement())
+  name     String    @db.VarChar(255)
+  email    String    @unique @db.VarChar(255)
+  password String    @db.VarChar(255)
+  img      String    @db.VarChar(255)
+  travels  travels[]
+}
+
+model addresses {
+  id           Int           @id(map: "addresses_pk") @default(autoincrement())
+  street       String        @db.VarChar(255)
+  number       String?       @db.VarChar(255)
+  neighborhood String        @db.VarChar(255)
+  cityId       Int
+  img          String        @unique @db.VarChar(255)
+  cities       cities        @relation(fields: [cityId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "addresses_fk0")
+  attractions  attractions[]
+  hotels       hotels[]
+  restaurants  restaurants[]
+}
+
+model hotels {
+  id          Int           @id(map: "hotels_pk") @default(autoincrement())
+  name        String        @db.VarChar(255)
+  addressId   Int
+  price       Int
+  img         String        @db.VarChar(255)
+  addresses   addresses     @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "hotels_fk0")
+  travelsData travelsData[]
+}
+
+model restaurants {
+  id          Int           @id(map: "restaurants_pk") @default(autoincrement())
+  name        String        @db.VarChar(255)
+  addressId   Int
+  price       Int
+  img         String        @db.VarChar(255)
+  addresses   addresses     @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "restaurants_fk0")
+  travelsData travelsData[]
+}
+
+model travelsData {
+  id           Int          @id(map: "travelsData_pk") @default(autoincrement())
+  travelId     Int          @default(autoincrement())
+  hotelId      Int?
+  restaurantId Int?
+  attractionId Int?
+  travels      travels      @relation(fields: [travelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travelsData_fk0")
+  hotels       hotels?      @relation(fields: [hotelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travelsData_fk1")
+  restaurants  restaurants? @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travelsData_fk2")
+  attractions  attractions? @relation(fields: [attractionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travelsData_fk3")
+}
