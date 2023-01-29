@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getUsers } from "../controllers/usersController.js";
+import { addUser, getUsers } from "../controllers/usersController.js";
+import { validateNewUser } from "../middlewares/usersMiddlewares.js";
 
 const usersRouter = Router();
 
 usersRouter
-        .get("/users", getUsers);
+        .get("/users", getUsers)
+        .post("/users", validateNewUser, addUser);
 
 export { usersRouter };
