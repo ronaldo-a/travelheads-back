@@ -99,6 +99,6 @@ model users {
 model sessions {
   id     Int    @id(map: "sessions_pk") @default(autoincrement())
   userId Int
-  token  String
+  token  String @unique
   users  users  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sessions_fk0")
 }
