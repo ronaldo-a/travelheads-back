@@ -6,7 +6,7 @@ import { validateLoginInfo } from "../middlewares/usersMiddleware.js";
 const authRouter = Router();
 
 authRouter
-        .post("/auth", validateLoginInfo, login)
-        .delete("/auth", validateSession, logout);
+        .post("/", validateLoginInfo, login)
+        .delete("/", validateSession, logout);
 
 export { authRouter };
