@@ -27,6 +27,7 @@ async function signIn(userData: Omit<users, "name" | "img">) {
     const session = {userId, token};
     try {
         await createSession(session);
+        
         return session;
     } catch (error) {
         return "serverError"
@@ -36,7 +37,8 @@ async function signIn(userData: Omit<users, "name" | "img">) {
 async function signOut(token: string) {
 
     try {
-        return await deleteSession(token);
+        await deleteSession(token);
+        
     } catch (error) {
         throw error
     }

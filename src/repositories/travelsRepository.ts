@@ -35,7 +35,6 @@ async function findTravelById(id: number) {
                 cities: true,
                 users: {
                     select: {
-                        id: true,
                         name: true
                     }
                 }
@@ -73,7 +72,6 @@ async function findTravelsByCityId(cityId: number) {
                 cities: true,
                 users: {
                     select: {
-                        id: true,
                         name: true
                     }
                 }

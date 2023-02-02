@@ -2,7 +2,7 @@ import { features } from "@prisma/client";
 import prisma from "../db.js";
 import { NewAddressType } from "../schemas/addressSchema.js";
 
-async function createFeature(featureData: Omit<features, "id">, addressData: NewAddressType) {
+async function createFeature(featureData: Omit<features, "id">, addressData: NewAddressType, travelId: number) {
     try {
         const feature = await prisma.$transaction(async (tx) => {
             const country = await tx.countries.upsert({
@@ -45,7 +45,14 @@ async function createFeature(featureData: Omit<features, "id">, addressData: New
                 }
             });
 
-            if (!feature || !address || !city || !country) {
+            const travelData = await tx.travelsData.create({
+                data: {
+                    travelId,
+                    featureId: feature.id
+                }
+            });
+
+            if (!travelData || !feature || !address || !city || !country) {
                 throw "badRequestError";
             }
 
@@ -58,4 +65,52 @@ async function createFeature(featureData: Omit<features, "id">, addressData: New
     }
 };
 
-export { createFeature };
+async function findFeaturesByCityId(cityId: number) {
+    try {
+        const features = await prisma.features.findMany({
+            where: {
+                addresses: {
+                    cityId
+                }       
+            }
+        });
+
+        if (features.length === 0) {
+            throw "notFoundError";
+        }
+
+        return features;
+    } catch (error) {
+        if (error === "notFoundError") {
+            throw "notFoundError";
+        }
+        
+        throw "badRequestError";
+    }
+}
+
+async function findFeaturesByTravelId(travelId: number) {
+    try {
+        const features = await prisma.travelsData.findMany({
+            where: {
+                travelId
+            }, include: {
+                features: true
+            }
+        })
+
+        if (features.length === 0) {
+            throw "notFoundError";
+        }
+
+        return features;
+    } catch (error) {
+        if (error === "notFoundError") {
+            throw "notFoundError";
+        }
+        
+        throw "badRequestError";
+    }
+}
+
+export { createFeature, findFeaturesByCityId, findFeaturesByTravelId };
