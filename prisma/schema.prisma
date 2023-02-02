@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 datasource db {
@@ -21,7 +22,6 @@ model cities {
   id        Int         @id(map: "cities_pk") @default(autoincrement())
   name      String      @unique @db.VarChar(255)
   countryId Int
-  img       String      @unique @db.VarChar(255)
   addresses addresses[]
   countries countries   @relation(fields: [countryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cities_fk0")
   travels   travels[]
