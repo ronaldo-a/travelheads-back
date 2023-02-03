@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { signIn, signOut } from "../services/authService.js";
+import { searchSession, signIn, signOut } from "../services/authService.js";
 
 async function login(req: Request, res: Response) {
     const {user} = res.locals;
@@ -29,4 +29,20 @@ async function logout(req: Request, res: Response) {
     }
 }
 
-export { login, logout };
+async function getSession(req: Request, res: Response) {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+
+    try {
+        const session = searchSession(token);
+        return res.status(200).send(session);
+    } catch (error) {
+        if (error === "notFoundError") {
+            return res.sendStatus(404);
+        }
+        
+        return res.sendStatus(500);
+    }
+
+}
+
+export { login, logout, getSession };

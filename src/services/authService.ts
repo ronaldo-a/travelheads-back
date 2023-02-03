@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
 import { users } from "@prisma/client";
 import { findUserByEmail } from "../repositories/usersRepository.js";
-import { createSession, deleteSession } from "../repositories/authRepository.js";
+import { createSession, deleteSession, findSession } from "../repositories/authRepository.js";
 
 async function signIn(userData: Omit<users, "name" | "img">) {
     const { email, password } = userData;
@@ -30,7 +30,7 @@ async function signIn(userData: Omit<users, "name" | "img">) {
         
         return session;
     } catch (error) {
-        return "serverError"
+        return error
     }
 }
 
@@ -44,4 +44,13 @@ async function signOut(token: string) {
     }
 }
 
-export { signIn, signOut };
+async function searchSession(token: string) {
+    try {
+        const session = await findSession(token);
+        return session;
+    } catch (error) {
+        throw error
+    }
+}
+
+export { signIn, signOut, searchSession };
