@@ -65,6 +65,28 @@ async function createFeature(featureData: Omit<features, "id">, addressData: New
     }
 };
 
+async function findFeatures() {
+    try {
+        const features = await prisma.features.findMany({
+            include: {
+                addresses: {
+                    include: {
+                        cities: true
+                    }
+                }
+            }
+        });
+
+        if (features.length === 0) {
+            throw "notFoundError";
+        }
+
+        return features
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function findFeaturesByCityId(cityId: number) {
     try {
         const features = await prisma.features.findMany({
@@ -72,6 +94,16 @@ async function findFeaturesByCityId(cityId: number) {
                 addresses: {
                     cityId
                 }       
+            }, include: {
+                addresses: {
+                    include: {
+                        cities: {
+                            include: {
+                                countries: true
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -81,11 +113,7 @@ async function findFeaturesByCityId(cityId: number) {
 
         return features;
     } catch (error) {
-        if (error === "notFoundError") {
-            throw "notFoundError";
-        }
-        
-        throw "badRequestError";
+        throw error;
     }
 }
 
@@ -113,4 +141,4 @@ async function findFeaturesByTravelId(travelId: number) {
     }
 }
 
-export { createFeature, findFeaturesByCityId, findFeaturesByTravelId };
+export { createFeature, findFeatures, findFeaturesByCityId, findFeaturesByTravelId };

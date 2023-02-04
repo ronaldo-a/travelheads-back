@@ -1,4 +1,4 @@
-import { findCity } from "../repositories/citiesRepository.js";
+import { findCities, findCity } from "../repositories/citiesRepository.js";
 
 async function searchCity(cityId: number) {
     try {
@@ -9,4 +9,13 @@ async function searchCity(cityId: number) {
     }
 }
 
-export { searchCity };
+async function searchCities() {
+    try {
+        const cities = await findCities();
+        return cities;
+    } catch (error) {
+        throw error
+    }
+}
+
+export { searchCity, searchCities };

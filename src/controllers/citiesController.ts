@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { searchCity } from "../services/citiesService.js";
+import { searchCities, searchCity } from "../services/citiesService.js";
 
 async function getCity(req: Request, res: Response) {
-    const {cityId} = req.body;
+    const cityId = +req.params.cityId;
 
     try {
         const city = await searchCity(cityId);
@@ -16,4 +16,18 @@ async function getCity(req: Request, res: Response) {
     }
 }
 
-export {getCity};
+async function getCities(req: Request, res: Response) {
+
+    try {
+        const cities = await searchCities();
+        res.status(200).send(cities);
+    } catch (error) {
+        if (error === "notFoundError") {
+            return res.sendStatus(404);
+        } else {
+            return res.sendStatus(500);
+        }
+    }
+}
+
+export {getCity, getCities};

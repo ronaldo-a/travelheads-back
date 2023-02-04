@@ -1,17 +1,41 @@
 import prisma from "../db.js";
 
 async function findCity(cityId: number) {
-    const city = await prisma.cities.findFirst({
-        where: {
-            id: cityId
+
+    try {
+        const city = await prisma.cities.findFirst({
+            where: {
+                id: cityId
+            }
+        })
+    
+        if (!city) {
+            throw "notFoundError";
         }
-    })
-
-    if (!city) {
-        throw "notFoundError";
+    
+        return city;   
+    } catch (error) {
+        throw error
     }
-
-    return city;
 }
 
-export { findCity };
+async function findCities() {
+
+    try {
+        const city = await prisma.cities.findMany({
+            include: {
+                countries: true
+            } 
+        });
+    
+        if (city.length === 0) {
+            throw "notFoundError";
+        }
+    
+        return city;   
+    } catch (error) {
+        throw error
+    }
+}
+
+export { findCity, findCities };

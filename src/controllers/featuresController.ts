@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { insertFeature, searchFeaturesByCityId, searchFeaturesByTravelId } from "../services/featuresService.js";
+import { insertFeature, searchFeatures, searchFeaturesByCityId, searchFeaturesByTravelId } from "../services/featuresService.js";
 
 async function addFeature(req: Request, res: Response) {
     const { featureData, addressData, travelId } = req.body;
@@ -9,6 +9,20 @@ async function addFeature(req: Request, res: Response) {
         return res.status(201).send(feature);
     } catch (error) {
         return res.sendStatus(400);
+    }
+}
+
+async function getFeatures(req: Request, res: Response) {
+
+    try {
+        const features = await searchFeatures();
+        return res.status(200).send(features);
+    } catch (error) {
+        if (error === "notFoundError") {
+            return res.sendStatus(404);
+        }
+
+        return res.status(500);
     }
 }
 
@@ -50,4 +64,4 @@ async function getFeaturesByTravelId(req: Request, res: Response) {
     }
 }
 
-export { addFeature, getFeaturesByCityId, getFeaturesByTravelId };
+export { addFeature, getFeatures, getFeaturesByCityId, getFeaturesByTravelId };

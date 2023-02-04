@@ -1,5 +1,5 @@
 import { features } from "@prisma/client";
-import { createFeature, findFeaturesByCityId, findFeaturesByTravelId } from "../repositories/featureRepository.js";
+import { createFeature, findFeatures, findFeaturesByCityId, findFeaturesByTravelId } from "../repositories/featureRepository.js";
 import { NewAddressType } from "../schemas/addressSchema.js";
 
 async function insertFeature( featureData: Omit<features, "id">, addressData: NewAddressType, travelId: number) {
@@ -10,6 +10,15 @@ async function insertFeature( featureData: Omit<features, "id">, addressData: Ne
     } catch (error) {
         throw error;
     } 
+}
+
+async function searchFeatures() {
+    try {
+        const features = await findFeatures();
+        return features;
+    } catch (error) {
+        throw error
+    }
 }
 
 async function searchFeaturesByCityId(cityId: number) {
@@ -30,4 +39,4 @@ async function searchFeaturesByTravelId(travelId: number) {
     }
 }
 
-export { insertFeature, searchFeaturesByCityId, searchFeaturesByTravelId };
+export { insertFeature, searchFeatures, searchFeaturesByCityId, searchFeaturesByTravelId };

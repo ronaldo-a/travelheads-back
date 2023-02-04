@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { getCity } from "../controllers/citiesController.js";
+import { getCities, getCity } from "../controllers/citiesController.js";
 
 const cityRouter = Router();
 
 cityRouter
-        .get("/", getCity);
+        .get("/:cityId", getCity)
+        .get("/", getCities);
 
 export { cityRouter };
