@@ -123,7 +123,11 @@ async function findFeaturesByTravelId(travelId: number) {
             where: {
                 travelId
             }, include: {
-                features: true
+                features: {
+                    include: {
+                        addresses: true
+                    }
+                }
             }
         })
 

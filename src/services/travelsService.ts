@@ -14,7 +14,7 @@ async function searchTravelById(id: number) {
 
     try {
         const travel = await findTravelById(id);
-        
+
         if (!travel) {
             throw "notFoundError"
         }

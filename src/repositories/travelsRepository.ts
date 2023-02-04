@@ -32,18 +32,22 @@ async function findTravelById(id: number) {
             where: {
                 id
             }, include: {
-                cities: true,
-                users: {
-                    select: {
-                        name: true
+                cities: {
+                    include: {
+                        countries: true
                     }
-                }
+                },
+                users: true
             }
         });
 
+        if (!travel) {
+            throw "notFoundError";
+        }
+
         return travel;
     } catch (error) {
-        throw "badRequestError"
+        throw error;
     }
 }
 
