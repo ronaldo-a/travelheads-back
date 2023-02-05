@@ -1,29 +1,52 @@
 import { travels } from "@prisma/client";
 import prisma from "../db.js";
 
-async function createTravel({name, userId, cityId}: Omit<travels, "id">) {
+async function createTravel(name: string, userId: number, cityName: string, countryName: string) {
 
     try {
-        const travel = await prisma.travels.create({
-            data: {
-                name,
-                userId,
-                cityId
-            }, include: {
-                cities: true,
-                users: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
-                }
-            }
-        })
 
-        return travel
-    } catch (error) {
-        throw "badRequestError";   
-    }
+        await prisma.$transaction(async (tx) => {
+    
+            const country = await tx.countries.upsert({
+                where: {
+                    name: countryName
+                },
+                update: {},
+                create: {
+                    name: countryName
+                }
+            });
+            
+            const city = await tx.cities.upsert({
+                where: {
+                    name: cityName,
+                    countryId: country.id
+                }, 
+                update: {},
+                create: {
+                    name: cityName,
+                    countryId: country.id
+                }
+            })
+    
+            const travel = await tx.travels.create({
+                data: {
+                    name,
+                    userId,
+                    cityId: city.id
+                }
+            })
+    
+            if (!travel || !city || !country) {
+                throw "badRequestError";
+            }
+    
+            return travel;
+            })
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
 }
 
 async function findTravelById(id: number) {

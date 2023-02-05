@@ -1,9 +1,9 @@
 import { createTravel, findTravelById, findTravelsByCityId, findTravelsByUserId } from "../repositories/travelsRepository.js";
 
-async function insertTravel(name: string, userId: number, cityId: number) {
+async function insertTravel(name: string, userId: number, cityName: string, countryName: string) {
 
     try {
-        const newTravel = await createTravel({name, userId, cityId});
+        const newTravel = await createTravel(name, userId, cityName, countryName);
         return newTravel;
     } catch (error) {
         throw error;

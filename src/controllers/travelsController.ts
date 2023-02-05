@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import { insertTravel, searchTravelById, searchTravelsByCityId, searchTravelsByUserId } from "../services/travelsService.js";
 
 async function addTravel(req: Request, res: Response) {
-    const { userId } = res.locals.session
-    const { name, cityId } = req.body;
-    if (!name || !userId || !cityId) {
+    const { userId } = res.locals.session;
+    const { name, cityName, countryName } = req.body;
+    if (!name || !userId || !cityName || !countryName) {
         return res.sendStatus(400);
     }
     
     try {
-        const newTravel = await insertTravel(name, userId, cityId);
+        const newTravel = await insertTravel(name, userId, cityName, countryName);
         return res.status(201).send(newTravel);
     } catch (error) {
         if (error === "badRequestError") {
