@@ -6,6 +6,25 @@ async function findUsers() {
     return users;
 }
 
+async function findUserById(id: number) {
+
+    try {
+        const user = await prisma.users.findFirst({
+            where: {
+                id
+            }
+        });
+    
+        if (!user) {
+            throw "notFoundError";
+        }
+
+        return user;
+    } catch (error) {
+        throw error
+    }
+}
+
 async function findUserByEmail(email: string) {
 
     try {
@@ -38,4 +57,4 @@ async function createUser({name, email, password, img}: Omit<users, "id">) {
     return newUser;
 }
 
-export { findUsers, findUserByEmail, createUser };
+export { findUsers, findUserByEmail, findUserById, createUser };

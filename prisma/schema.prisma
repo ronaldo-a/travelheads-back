@@ -45,7 +45,7 @@ model travels {
 
 model travelsData {
   id        Int      @id(map: "travelsData_pk") @default(autoincrement())
-  travelId  Int      @default(autoincrement())
+  travelId  Int      
   featureId Int
   travels   travels  @relation(fields: [travelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travelsData_fk0")
   features  features @relation(fields: [featureId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "travelsData_fk1")

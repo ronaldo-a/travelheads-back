@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { insertUser, searchUsers } from "../services/usersService.js";
+import { insertUser, searchUserById, searchUsers } from "../services/usersService.js";
 
 async function getUsers(req: Request, res: Response) {
     try {
@@ -11,16 +11,30 @@ async function getUsers(req: Request, res: Response) {
     }
 }
 
+async function getUserById(req: Request, res: Response) {
+    const { userId } = res.locals.session;
+
+    try {
+        const user = await searchUserById(userId);
+        return res.status(200).send(user)
+    } catch (error) {
+        if (error === "notFoundError") {
+            return res.sendStatus(404);
+        }
+        return res.sendStatus(400);
+    }
+}
+
 async function addUser(req: Request, res: Response) {
     const {newUser} = res.locals;
-    
+    console.log(newUser);
+
     try {
         const insertedUser = await insertUser(newUser);
         return res.status(201).send(insertedUser);
     } catch (error) {
-        console.log(error);
-        return res.sendStatus(500);
+        return res.sendStatus(400);
     }
 }
 
-export { getUsers, addUser };
+export { getUsers, addUser, getUserById };

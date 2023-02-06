@@ -1,13 +1,22 @@
 import bcrypt from "bcrypt";
 import { users } from "@prisma/client";
-import { createUser, findUsers } from "../repositories/usersRepository.js";
+import { createUser, findUserById, findUsers } from "../repositories/usersRepository.js";
 
 async function searchUsers() {
     try {
         const users = await findUsers();
         return users;
     } catch (error) {
-        console.log(error);
+        throw error;
+    }
+}
+
+async function searchUserById(id: number) {
+    try {
+        const user = await findUserById(id);
+        return user;
+    } catch (error) {
+        throw error;
     }
 }
 
@@ -20,9 +29,8 @@ async function insertUser(user: Omit<users, "id">) {
         const returnNewUser = newUser;
         return returnNewUser;
     } catch (error) {
-        console.log(error);
-        return error;
+        throw error;
     }
 }
 
-export { searchUsers, insertUser };
+export { searchUsers, insertUser, searchUserById };

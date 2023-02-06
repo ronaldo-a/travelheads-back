@@ -5,24 +5,12 @@ import { NewAddressType } from "../schemas/addressSchema.js";
 async function createFeature(featureData: Omit<features, "id">, addressData: NewAddressType, travelId: number) {
     try {
         const feature = await prisma.$transaction(async (tx) => {
-            const country = await tx.countries.upsert({
-                where: {
-                    name: addressData.countryName
-                },
-                update: {},
-                create: {
-                    name: addressData.countryName
-                }
-            });
 
-            const city = await tx.cities.upsert({
+            const travel = await tx.travels.findFirst({
                 where: {
-                    name: addressData.cityName
-                },
-                update: {},
-                create: {
-                    name: addressData.cityName,
-                    countryId: country.id
+                    id: travelId
+                }, select: {
+                    cityId: true
                 }
             });
 
@@ -31,7 +19,7 @@ async function createFeature(featureData: Omit<features, "id">, addressData: New
                     street: addressData.street,
                     number: addressData.number,
                     neighborhood: addressData.neighborhood,
-                    cityId: city.id
+                    cityId: travel.cityId
                 }
             });
 
@@ -52,7 +40,7 @@ async function createFeature(featureData: Omit<features, "id">, addressData: New
                 }
             });
 
-            if (!travelData || !feature || !address || !city || !country) {
+            if (!travelData || !feature || !address || !travel) {
                 throw "badRequestError";
             }
 
@@ -61,6 +49,7 @@ async function createFeature(featureData: Omit<features, "id">, addressData: New
 
         return feature;
     } catch (error) {
+        console.log(error)
         throw error;
     }
 };
